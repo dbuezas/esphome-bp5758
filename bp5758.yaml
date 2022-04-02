@@ -1,0 +1,47 @@
+substitutions:
+  name: "tuya-globe"
+  friendly_name: "Tuya Globe"
+
+
+esphome:
+  name: "${name}"
+  comment: "${friendly_name}"
+  platform: ESP8266
+  board: esp01_1m
+  includes:
+    - bp5758.h
+
+wifi:
+  ssid: !secret wifi_name
+  password: !secret wifi_pass
+  fast_connect: true
+  power_save_mode: HIGH
+
+ota:
+api:
+
+logger:
+  level: DEBUG
+
+light:
+  - platform: custom
+    lambda: |-
+      auto light_out = new MyCustomLightOutput(/*sda*/ 2, /*scl*/ 0);
+      light_out->set_constant_brightness(false);
+      light_out->set_color_interlock(true);
+      App.register_component(light_out);
+      return {light_out};
+
+    lights:
+      - name: "${friendly_name}"
+        id: tuya_globe
+        effects:
+          - lambda:
+              name: dynamic range (default)
+              lambda: |-
+                get_bp5758(tuya_globe->get_output()).use_dynamic_range = true;
+          - lambda:
+              name: static range
+              lambda: |-
+                get_bp5758(tuya_globe->get_output()).use_dynamic_range = false;
+            
