@@ -1,3 +1,4 @@
+# bp5758 led driver constant current. Usual in tuya smart bulbs
 # IMPORTANT
 --> make sure to copy both `bp5758.yaml` and `bp5758.h` <--
 
